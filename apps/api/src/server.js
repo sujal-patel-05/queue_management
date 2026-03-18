@@ -18,10 +18,30 @@ import { initSocketService } from './services/socketService.js';
 
 const app = Fastify({ logger: true });
 
+// Dynamic CORS: allow Vercel previews, localhost, and any explicit env origins
+const allowedOrigins = [
+  process.env.CUSTOMER_PWA_URL,
+  process.env.ADMIN_DASHBOARD_URL,
+  'http://localhost:5173',
+  'http://localhost:5174'
+].filter(Boolean);
+
+function checkOrigin(origin, cb) {
+  // Allow requests with no origin (mobile apps, curl, etc.)
+  if (!origin) return cb(null, true);
+  // Allow any Vercel preview/production domain
+  if (origin.endsWith('.vercel.app')) return cb(null, true);
+  // Allow any explicitly configured origins
+  if (allowedOrigins.includes(origin)) return cb(null, true);
+  // Allow localhost for development
+  if (origin.startsWith('http://localhost:')) return cb(null, true);
+  cb(new Error('Not allowed by CORS'), false);
+}
+
 // Socket.io setup
 const io = new Server(app.server, {
   cors: {
-    origin: [process.env.CUSTOMER_PWA_URL, process.env.ADMIN_DASHBOARD_URL],
+    origin: checkOrigin,
     credentials: true
   }
 });
@@ -30,7 +50,7 @@ app.decorate('io', io);
 
 // Plugins
 await app.register(cors, {
-  origin: [process.env.CUSTOMER_PWA_URL, process.env.ADMIN_DASHBOARD_URL],
+  origin: checkOrigin,
   credentials: true
 });
 await app.register(jwt, { secret: process.env.JWT_SECRET });
