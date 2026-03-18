@@ -48,7 +48,8 @@ export default async function authRoutes(app) {
         name: staff.name,
         role: staff.role,
         restaurant_id: staff.restaurant_id,
-        restaurant_name: staff.restaurants?.name
+        restaurant_name: staff.restaurants?.name,
+        restaurant_slug: staff.restaurants?.slug
       }
     };
   });
@@ -147,7 +148,8 @@ export default async function authRoutes(app) {
         name: staff.name,
         role: 'owner',
         restaurant_id: restaurant.id,
-        restaurant_name: restaurant.name
+        restaurant_name: restaurant.name,
+        restaurant_slug: restaurant.slug
       }
     };
   });
