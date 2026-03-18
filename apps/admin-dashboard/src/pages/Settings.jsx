@@ -106,7 +106,7 @@ export default function SettingsPage() {
     { id: 'staff', label: 'Staff', icon: Users },
   ];
 
-  const queueUrl = generateQueueUrl(user?.restaurant_slug || 'demo', import.meta.env.VITE_API_URL?.replace(':3001', ':5173') || 'https://app.qflow.in');
+  const queueUrl = generateQueueUrl(user?.restaurant_slug || 'demo', import.meta.env.VITE_CUSTOMER_URL || 'http://localhost:5173');
 
   return (
     <div className="p-6 max-w-4xl mx-auto">
